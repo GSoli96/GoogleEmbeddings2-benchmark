@@ -1,0 +1,214 @@
+# configs/models.yaml
+# Embedding model configurations for the benchmark
+
+models:
+  google_embeddings_2:
+    name: "Google Embeddings 2"
+    short_name: "GE2"
+    type: "api"
+    provider: "google"
+    # Vertex AI connection — edit these three values directly
+    model_id: "text-embedding-004"   # Gemini 2 embedding model on Vertex AI
+    project_id: "provatest-495410"   # <-- your GCP project ID
+    location: "us-central1"          # <-- Vertex AI region
+    # Auth: uses Application Default Credentials (gcloud auth application-default login)
+    # No API key needed for Vertex AI — ADC handles it automatically.
+    dimension: 768
+    max_tokens: 2048
+    multilingual: true
+    cost_per_million_tokens: 0.025
+    batch_size: 100
+
+  openai_text_emb_3_large:
+    name: "OpenAI text-embedding-3-large"
+    short_name: "OAI-3L"
+    type: "api"
+    provider: "openai"
+    model_id: "text-embedding-3-large"
+    dimension: 3072
+    max_tokens: 8191
+    multilingual: true
+    cost_per_million_tokens: 0.130
+    api_key: "sk-..."                # <-- inserisci qui la tua chiave OpenAI
+    batch_size: 100
+
+  cohere_embed_v3:
+    name: "Cohere Embed v3"
+    short_name: "Cohere-v3"
+    type: "api"
+    provider: "cohere"
+    model_id: "embed-multilingual-v3.0"
+    dimension: 1024
+    max_tokens: 512
+    multilingual: true
+    cost_per_million_tokens: 0.100
+    api_key: "..."
+    batch_size: 96
+
+  voyage_3:
+    name: "Voyage-3"
+    short_name: "Voyage-3"
+    type: "api"
+    provider: "voyageai"
+    model_id: "voyage-3"
+    dimension: 1024
+    max_tokens: 32000
+    multilingual: true
+    cost_per_million_tokens: 0.060
+    api_key: "..."                   # <-- inserisci qui la tua chiave Voyage AI
+    batch_size: 128
+
+  bge_m3_base:
+    name: "BGE-M3"
+    short_name: "BGE-M3"
+    type: "local"
+    provider: "huggingface"
+    model_id: "BAAI/bge-m3"
+    dimension: 1024
+    max_tokens: 8192
+    multilingual: true
+    cost_per_million_tokens: 0.0  # self-hosted
+    batch_size: 32
+    device: "auto"  # auto-selects cuda/cpu
+
+  bge_m3:
+    name: "BGE-M3_2"
+    short_name: "BGE-M3_2"
+    type: "local"
+    provider: "huggingface"
+    model_id: "BAAI/bge-m3"
+    dimension: 1024
+    max_tokens: 8192
+    multilingual: true
+    cost_per_million_tokens: 0.0
+    batch_size: 32
+    device: "auto"
+    #query_prefix: "Represent this sentence for searching relevant passages: "
+    #passage_prefix: ""
+
+  e5_large:
+    name: "E5-large"
+    short_name: "E5-L"
+    type: "local"
+    provider: "huggingface"
+    model_id: "intfloat/e5-large-v2"
+    dimension: 1024
+    max_tokens: 512
+    multilingual: false
+    cost_per_million_tokens: 0.0  # self-hosted
+    batch_size: 64
+    device: "auto"
+    query_prefix: "query: "
+    passage_prefix: "passage: "
+
+  multilingual_e5_large:
+    name: "Multilingual-E5-large"
+    short_name: "mE5-L"
+    type: "local"
+    provider: "huggingface"
+    model_id: "intfloat/multilingual-e5-large"
+    dimension: 1024
+    max_tokens: 512
+    multilingual: true
+    cost_per_million_tokens: 0.0
+    batch_size: 32
+    device: "auto"
+    query_prefix: "query: "
+    passage_prefix: "passage: "
+
+  labse:
+    name: "LaBSE"
+    short_name: "LaBSE"
+    type: "local"
+    provider: "huggingface"
+    model_id: "sentence-transformers/LaBSE"
+    dimension: 768
+    max_tokens: 512
+    multilingual: true
+    cost_per_million_tokens: 0.0
+    batch_size: 64
+    device: "auto"
+    query_prefix: ""
+    passage_prefix: ""
+
+  mpnet_multilingual:
+    name: "Paraphrase-Multilingual-MPNet"
+    short_name: "mMPNet"
+    type: "local"
+    provider: "huggingface"
+    model_id: "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
+    dimension: 768
+    max_tokens: 512
+    multilingual: true
+    cost_per_million_tokens: 0.0
+    batch_size: 64
+    device: "auto"
+    query_prefix: ""
+    passage_prefix: ""
+
+# Datasets configuration
+datasets:
+  beir_subsets:
+    - name: "nfcorpus"
+      display: "NFCorpus"
+      language: "en"
+      domain: "biomedical"
+    - name: "scifact"
+      display: "SciFact"
+      language: "en"
+      domain: "scientific"
+    - name: "trec-covid"
+      display: "TREC-COVID"
+      language: "en"
+      domain: "biomedical"
+    - name: "fiqa"
+      display: "FiQA-2018"
+      language: "en"
+      domain: "financial"
+
+  miracl_languages:
+    - "en"
+    - "it"
+    - "fr"
+    - "de"
+    - "es"
+    - "ar"
+    - "zh"
+    - "ja"
+
+  italian_benchmark:
+    name: "IT-RAG-Bench"
+    n_passages: 3200
+    n_queries: 640
+    sources:
+      - "wikipedia_it"
+      - "italian_faq"
+      - "italian_legal"
+    seed: 42
+
+# Chunking experiment config
+chunking:
+  sizes: [256, 512, 1024]
+  strategies:
+    - name: "fixed"
+      overlap: 0
+    - name: "sliding_window"
+      overlap: 0.5  # 50% overlap
+    - name: "semantic"
+      similarity_threshold: 0.75
+      min_chunk_tokens: 64
+      max_chunk_multiplier: 2.0
+
+# Evaluation config
+evaluation:
+  top_k_values: [1, 5, 10]
+  ann_index: "hnsw"
+  hnsw_m: 32
+  hnsw_ef_construction: 200
+  hnsw_ef_search: 100
+  exact_threshold: 100000  # use exact search below this corpus size
+  n_runs: 3
+  seed: 42
+
+# Matryoshka ablation
+matryoshka_dims: [128, 256, 512, 768]
